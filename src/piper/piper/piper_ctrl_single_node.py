@@ -28,11 +28,13 @@ class PiperRosNode(Node):
         self.declare_parameter('auto_enable', False)
         self.declare_parameter('gripper_exist', True)
         self.declare_parameter('gripper_val_mutiple', 1)
+        self.declare_parameter('publish_rate', 200)
 
         self.can_port = self.get_parameter('can_port').get_parameter_value().string_value
         self.auto_enable = self.get_parameter('auto_enable').get_parameter_value().bool_value
         self.gripper_exist = self.get_parameter('gripper_exist').get_parameter_value().bool_value
         self.gripper_val_mutiple = self.get_parameter('gripper_val_mutiple').get_parameter_value().integer_value
+        self.publish_rate = self.get_parameter('publish_rate').get_parameter_value().integer_value
         self.gripper_val_mutiple = max(0, min(self.gripper_val_mutiple, 10))
 
         self.get_logger().info(f"can_port is {self.can_port}")
@@ -86,7 +88,7 @@ class PiperRosNode(Node):
     def publish_thread(self):
         """Publish messages from the robotic arm
         """
-        rate = self.create_rate(200)  # 200 Hz
+        rate = self.create_rate(self.publish_rate)
         enable_flag = False
         # Set timeout (seconds)
         timeout = 5
